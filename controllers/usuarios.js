@@ -12,7 +12,7 @@ const usuariosGet = async(req = request, res = response) => {
         Usuario.find(query)
             .skip( Number(desde) )
             .limit( Number( limite ))
-    ]);
+    ]).catch(error);
 
     res.json({ 
         total,
