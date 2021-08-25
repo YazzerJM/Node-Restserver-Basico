@@ -11,7 +11,7 @@ const obtenerCategorias = async( req, res = response ) => {
         Categoria.find(query )
             .skip( Number( desde ) )
             .limit( Number( limite ) )
-            .populate('usuario')
+            .populate('usuario', 'nombre')
     ]);
 
     // const total = await Categoria.countDocuments( query );
@@ -28,7 +28,7 @@ const obtenerCategoria = async( req, res = response ) => {
 
     const id = req.params.id;
 
-    const categoria = await Categoria.findById( id ).populate('usuario');
+    const categoria = await Categoria.findById( id ).populate('usuario', 'nombre');
 
     if( !categoria.estado ){
         return res.status(400).json({
@@ -66,25 +66,24 @@ const crearCategoria = async (req, res = response) => {
 
 }
 
-// TODO: actualizarCategoria
 const actualizarCategoria = async( req, res = response ) => {
 
     const id = req.params.id;
-    const { ...resto } = req.body;
+    const { estado, usuario, ...data } = req.body;
+
+    data.nombre = data.nombre.toUpperCase();
+    data.usuario = req.usuario._id;
     
-    const categoria = await Categoria.findByIdAndUpdate( id, resto );
+    const categoria = await Categoria.findByIdAndUpdate( id, data, { new: true} );
     
-    res.json({
-        categoria
-    });
+    res.json( categoria );
 
 } 
 
-// TODO: borrarCategoria - estado:false
 const borrarCategoria = async( req, res = response ) => {
     const id = req.params.id;
 
-    const categoria = await Categoria.findByIdAndUpdate( id, { estado: false } );
+    const categoria = await Categoria.findByIdAndUpdate( id, { estado: false }, {new: true} );
 
     res.json(categoria);
 }

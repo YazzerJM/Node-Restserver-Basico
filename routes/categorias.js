@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { validarJWT, validarCampos, tieneRole } = require('../middlewares');
+const { validarJWT, validarCampos, tieneRole, esAdminRole } = require('../middlewares');
 const { 
     crearCategoria, 
     obtenerCategorias, 
@@ -42,7 +42,7 @@ router.put('/:id', [
 // Borrar una categoria - Admin
 router.delete('/:id', [
     validarJWT,
-    tieneRole('ADMIN_ROLE'),
+    esAdminRole,
     check('id').custom( existeCategoria ),
     validarCampos
 ], borrarCategoria );
