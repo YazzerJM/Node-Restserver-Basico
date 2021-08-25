@@ -55,7 +55,7 @@ const login = async(req, res = response) => {
 
 const googleSignin = async(req, res = response) => {
 
-    const { id_token } = req.body;
+    const {      } = req.body;
 
     try {
         const { nombre, img, correo } = await googleVerify( id_token );
