@@ -8,9 +8,8 @@ const ProductoSchema = Schema({
         unique: true
     },
     estado: {
-        type: String,
-        required: [true, 'El nombre es obligatorio'],
-        unique: true
+        type: Boolean,
+        default: true
     },
     usuario: {
         type: Schema.Types.ObjectId,
@@ -36,4 +35,4 @@ ProductoSchema.methods.toJSON = function(){
     return data;
 }
 
-module.exports = model( 'Produto', ProductoSchema );
+module.exports = model( 'Producto', ProductoSchema );
