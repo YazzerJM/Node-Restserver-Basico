@@ -27,18 +27,28 @@ const obtenerProducto = async( req, res ) => {
 
     const id = req.params.id;
 
-    const producto = await Producto.findById( id );
+    const producto = await Producto.findById( id )
+        .populate('usuario', 'nombre')
+        .populate('categoria', 'nombre');
 
     res.json(producto);
 }
 
 const crearProducto = async( req, res ) => {
 
-    const nombre = req.body.nombre.toUpperCase();
-    const categoria = req.body.categoria.toUpperCase();
+    const { estado, usuario, ...body } = req.body;
+
+    const nombre = body.nombre.toUpperCase();
+    const categoria = body.categoria.toUpperCase();
     const { precio, descripcion } = req.body;
     
     const productoDB = await Producto.findOne({ nombre });
+    
+    if( productoDB ){
+        return res.status(400).json({
+            msg: `El producto ${ productoDB.nombre }, ya existe`
+        });
+    }
 
     const categoriaDB = await Categoria.findOne({ nombre: categoria });
 
@@ -48,11 +58,6 @@ const crearProducto = async( req, res ) => {
         });
     }
 
-    if( productoDB ){
-        return res.status(400).json({
-            msg: `El producto ${ nombre }, ya existe`
-        });
-    }
 
     const data = {
         nombre,
@@ -78,7 +83,10 @@ const actualizarProducto = async( req, res ) => {
 
     const categoriaDB = await Categoria.findOne({ nombre: data.categoria });
     
-    data.nombre = data.nombre.toUpperCase();
+    if( data.nombre ){
+        data.nombre = data.nombre.toUpperCase();
+    }
+    
     data.usuario = req.usuario._id;
     data.categoria = categoriaDB._id;
 
@@ -93,7 +101,7 @@ const borrarProducto = async( req, res ) => {
 
     const producto = await Producto.findByIdAndUpdate( id, { estado: false }, { new: true } );
 
-    return res.json(producto);
+    return res.json( producto );
 }
 
 
